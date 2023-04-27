@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ extension.name }}</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <h1>{{ extension.name }}</h1>
+
+    <h2>Tierlists</h2>
+    <ul>
+        {% for tierlist in tierlists %}
+        <li>
+            <a href="{{ url_for('tierlist', extension_code=extension.code, tierlist_id=tierlist.id) }}">
+                {{ tierlist.name }}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+    <a href="{{ url_for('create_tierlist', extension_code=extension.code) }}">Créer une tierlist</a>
+</body>
+</html>

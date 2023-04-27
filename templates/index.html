@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des extensions</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <h1>Liste des extensions</h1>
+    <ul>
+        {% for extension in extensions %}
+            <li>
+                <a href="{{ url_for('extension', extension_code=extension['code']) }}">{{ extension['name'] }}</a>
+
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

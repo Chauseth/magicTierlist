@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ tierlist.name }}</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+<a href="{{ url_for('index') }}">Revenir a l'accueil</a> <br>
+<a href="{{ url_for('extension', extension_code=extension['code']) }}">Revenir à {{ extension['name'] }}</a>
+<h1>{{ extension.name }} - {{ tierlist.name }}</h1>
+<div class="cards-container">
+
+    <form method="post" action="{{ url_for('save_tierlist_ratings', extension_code=extension['code'], tierlist_id=tierlist.id) }}">
+        <div class="button-container">
+            <button type="submit">Enregistrer les notes</button>
+        </div>
+        {% for card in cards %}
+        <div class="card">
+            <img src="{{ card['normal'] }}" alt="{{ card['printed_name'] }}">
+            <p>{{ card['printed_name'] }}</p>
+            <select class="rating" name="rating_{{ card['id'] }}" id="rating_{{ card['id'] }}">
+                <option value="" disabled {% if card["rating"] is none %}selected{% endif %}>-- Choisissez une note --</option>
+                <option value="S" {% if card["rating"] == 'S' %}selected{% endif %}>S</option>
+                <option value="A" {% if card["rating"] == 'A' %}selected{% endif %}>A</option>
+                <option value="B" {% if card["rating"] == 'B' %}selected{% endif %}>B</option>
+                <option value="C" {% if card["rating"] == 'C' %}selected{% endif %}>C</option>
+                <option value="D" {% if card["rating"] == 'D' %}selected{% endif %}>D</option>
+                <option value="E" {% if card["rating"] == 'E' %}selected{% endif %}>E</option>
+                <option value="F" {% if card["rating"] == 'F' %}selected{% endif %}>F</option>
+            </select>
+
+        </div>
+        {% endfor %}
+    </form>
+
+
+</div>
+</body>
+</html>
