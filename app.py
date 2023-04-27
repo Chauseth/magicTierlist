@@ -13,7 +13,7 @@ def get_db_connection():
 @app.route('/')
 def index():
     conn = get_db_connection()
-    extensions = conn.execute('SELECT id, name, code FROM sets').fetchall()
+    extensions = conn.execute("SELECT id, name, code FROM sets WHERE set_type in ('expansion', 'masterpiece', 'commander') ORDER BY released_at DESC").fetchall()
     conn.close()
     return render_template('index.html', extensions=extensions)
 
