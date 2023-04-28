@@ -10,7 +10,7 @@
     <ul>
         {% for extension in extensions %}
             <li>
-                <a href="{{ url_for('extension', extension_code=extension['code']) }}">{{ extension['name'] }}</a>
+                <img src="{{ extension['icon_svg_uri'] }}" alt="" class="extension-icon"> <a href="{{ url_for('extension', extension_code=extension['code']) }}">{{ extension['name'] }}</a>
 
             </li>
         {% endfor %}

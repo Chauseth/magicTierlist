@@ -20,7 +20,6 @@ def import_cards():
         card["set_id"] = conn.execute('SELECT id FROM sets WHERE scryfall_id = ?',
                                       (card["set_id"],)).fetchone()[0]
 
-
         if "image_uris" in card:
             card["img_small"] = card["image_uris"].get("small", "")
             card["img_normal"] = card["image_uris"].get("normal", "")
@@ -35,7 +34,6 @@ def import_cards():
             card["img_png"] = card["card_faces"][0].get("png", "")
             card["img_art_crop"] = card["card_faces"][0].get("art_crop", "")
             card["img_border_crop"] = card["card_faces"][0].get("border_crop", "")
-
 
         if "card_faces" in card:
             card[
@@ -84,7 +82,8 @@ def import_cards():
 
             cursor.execute(
                 "INSERT INTO image_uris (scryfall_id, small, normal, large, png, art_crop, border_crop) VALUES (?, ?,?,?,?,?,?)",
-                (card["id"], card["img_small"], card["img_normal"],card["img_large"],card["img_png"],card["img_art_crop"],card["img_border_crop"]))
+                (card["id"], card["img_small"], card["img_normal"], card["img_large"], card["img_png"],
+                 card["img_art_crop"], card["img_border_crop"]))
 
         except Exception as e:
             traceback.print_exc()
@@ -101,6 +100,7 @@ def import_sets():
             "INSERT INTO 'sets' (code, name, icon_svg_uri, scryfall_id, released_at, scryfall_uri, set_type) VALUES(?, ?, ?, ?, ?, ?, ?)",
             (set["code"], set["name"], set["icon_svg_uri"], set["id"], set["released_at"], set["scryfall_uri"],
              set["set_type"]))
+
 
 import_sets()
 import_cards()

@@ -10,6 +10,15 @@ h1 {
     text-align: center;
 }
 
+ul {
+  list-style-type: none;
+}
+
+.extension-icon {
+    width: 20px;
+    height: auto;
+}
+
 .cards-container > form {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
