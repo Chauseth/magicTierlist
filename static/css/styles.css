@@ -6,12 +6,18 @@ body {
     color: #333;
 }
 
+.container {
+display: flex;
+justify-content: space-around;
+}
+
 h1 {
     text-align: center;
 }
 
 ul {
   list-style-type: none;
+  padding-left: 0;
 }
 
 .extension-icon {
@@ -20,10 +26,9 @@ ul {
 }
 
 .cards-container > form {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    grid-gap: 20px;
-    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center
 }
 
 .card {
@@ -32,7 +37,8 @@ ul {
     border-radius: 5px;
     padding: 20px;
     text-align: center;
-    width: 100%;
+    max-width: 250px;
+    margin: 20px;
 }
 
 .card img {
@@ -58,6 +64,7 @@ ul {
     grid-column: 1 / -1;
     display: flex;
     justify-content: center;
+    flex-basis: 100%
 }
 
 button[type="submit"] {

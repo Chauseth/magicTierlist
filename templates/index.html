@@ -2,18 +2,42 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Liste des extensions</title>
+    <title>Magic Tierlist</title>
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
-    <h1>Liste des extensions</h1>
-    <ul>
-        {% for extension in extensions %}
+<h1>Magic Tierlist</h1>
+
+<div class="container">
+    <div class="extensions-container">
+        <h3>Liste des extensions</h3>
+        <ul>
+            {% for extension in extensions %}
             <li>
-                <img src="{{ extension['icon_svg_uri'] }}" alt="" class="extension-icon"> <a href="{{ url_for('extension', extension_code=extension['code']) }}">{{ extension['name'] }}</a>
+                <img src="{{ extension['icon_svg_uri'] }}" alt="" class="extension-icon"> <a
+                    href="{{ url_for('extension', extension_code=extension['code']) }}">{{ extension['name'] }}</a>
 
             </li>
-        {% endfor %}
-    </ul>
+            {% endfor %}
+
+        </ul>
+    </div>
+    <div class="tierlists-container">
+        <h3>Les dernières tierlists</h3>
+        <ul>
+            {% for tierlist in tierlists %}
+            <li>
+                <img src="{{ tierlist['icon_svg_uri'] }}" alt="" class="extension-icon"> <a
+                    href="{{ url_for('tierlist', extension_code=tierlist['code'], tierlist_id=tierlist['id']) }}">
+                {{ tierlist.name }} ({{tierlist.set_name}})
+            </a>
+            </li>
+            {% endfor %}
+
+        </ul>
+    </div>
+</div>
+</div>
+
 </body>
 </html>

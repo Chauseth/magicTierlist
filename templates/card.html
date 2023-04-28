@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ card.name }}</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <h1>{{ card.name }}</h1>
+
+    <img src="{{ card['set_icon'] }}" alt="" class="extension-icon"> <a href="{{ url_for('extension', extension_code=card['set_code']) }}">{{ card.set_name }}</a>
+
+    <img src="{{ card['normal'] }}" alt="">
+
+<p>{{ card['printed_text'] }}</p>
+</body>
+</html>

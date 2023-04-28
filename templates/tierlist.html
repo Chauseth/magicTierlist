@@ -17,7 +17,8 @@
         </div>
         {% for card in cards %}
         <div class="card">
-            <img src="{{ card['normal'] }}" alt="{{ card['printed_name'] }}">
+            <a href="{{ url_for('card', scryfall_id=card['scryfall_id']) }}"><img src="{{ card['normal'] }}" alt="{{ card['printed_name'] }}"></a>
+
             <p>{{ card['printed_name'] }}</p>
             <select class="rating" name="rating_{{ card['id'] }}" id="rating_{{ card['id'] }}">
                 <option value="" disabled {% if card["rating"] is none %}selected{% endif %}>-- Choisissez une note --</option>

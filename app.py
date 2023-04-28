@@ -13,9 +13,13 @@ def get_db_connection():
 @app.route('/')
 def index():
     conn = get_db_connection()
-    extensions = conn.execute("SELECT id, name, code, icon_svg_uri FROM sets WHERE set_type in ('expansion', 'masterpiece', 'commander') ORDER BY released_at DESC").fetchall()
+    extensions = conn.execute(
+        "SELECT DISTINCT sets.id, sets.name, code, icon_svg_uri FROM sets INNER JOIN cards ON sets.id = cards.set_id WHERE set_type in ('expansion', 'masterpiece', 'commander') ORDER BY sets.released_at DESC").fetchall()
+
+    tierlists = conn.execute(
+        "SELECT tierlists.id, tierlists.name, sets.name as set_name,sets.code, sets.icon_svg_uri FROM tierlists INNER JOIN sets ON tierlists.set_id = sets.id ORDER BY created_at DESC LIMIT 10").fetchall()
     conn.close()
-    return render_template('index.html', extensions=extensions)
+    return render_template('index.html', extensions=extensions, tierlists=tierlists)
 
 
 @app.route('/extension/<string:extension_code>')
@@ -81,6 +85,23 @@ def save_tierlist_ratings(extension_code, tierlist_id):
 
     # Rediriger vers la page de la tierlist
     return redirect(url_for('tierlist', extension_code=extension_code, tierlist_id=tierlist_id))
+
+
+@app.route('/card/<string:scryfall_id>')
+def card(scryfall_id):
+    conn = get_db_connection()
+    card = conn.execute(
+        """
+        SELECT cards.*, image_uris.normal, sets.name as set_name, sets.code as set_code, sets.icon_svg_uri as set_icon
+        FROM cards
+        INNER JOIN image_uris ON cards.scryfall_id = image_uris.scryfall_id
+        INNER JOIN sets ON cards.set_id = sets.id
+        WHERE cards.scryfall_id = ?
+        LIMIT 1
+        """,
+        (scryfall_id,)).fetchone()
+    conn.close()
+    return render_template('card.html', card=card)
 
 
 if __name__ == '__main__':
