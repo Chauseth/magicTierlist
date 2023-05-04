@@ -1,12 +1,13 @@
 import mysql.connector
 import json
 import traceback
+import os
 
 config = {
-    'user': 'flask',
-    'password': 'Flask2023.',
-    'host': 'localhost',
-    'database': 'magictierlist',
+    'user': os.getenv("DB_USER"),
+    'password': os.getenv("DB_PASSWORD"),
+    'host': os.getenv("DB_HOST"),
+    'database': os.getenv("DB_NAME"),
     'raise_on_warnings': True
 }
 
