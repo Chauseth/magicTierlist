@@ -1,73 +1,94 @@
-CREATE TABLE sets
-(
-    id           INTEGER PRIMARY KEY AUTOINCREMENT,
-    code         TEXT,
-    name         TEXT,
-    icon_svg_uri TEXT,
-    scryfall_id  TEXT,
-    released_at  TEXT,
-    scryfall_uri TEXT,
-    set_type     TEXT
-);
+-- u949344532_magictierlist.`sets` definition
+
+CREATE TABLE `sets` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(6) DEFAULT NULL,
+  `name` varchar(100) DEFAULT NULL,
+  `icon_svg_uri` varchar(255) DEFAULT NULL,
+  `scryfall_id` varchar(36) DEFAULT NULL,
+  `released_at` datetime DEFAULT NULL,
+  `scryfall_uri` varchar(255) DEFAULT NULL,
+  `set_type` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `code_UNIQUE` (`code`),
+  UNIQUE KEY `scryfall_id_UNIQUE` (`scryfall_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
-CREATE TABLE cards
-(
-    id                INTEGER PRIMARY KEY AUTOINCREMENT,
-    scryfall_id       TEXT UNIQUE,
-    oracle_id         TEXT,
-    name              TEXT,
-    printed_name      TEXT,
-    lang              TEXT,
-    released_at       TEXT,
-    scryfall_uri      TEXT,
-    mana_cost         TEXT,
-    cmc               TEXT,
-    type_line         TEXT,
-    printed_type_line TEXT,
-    oracle_text       TEXT,
-    printed_text      TEXT,
-    power             TEXT,
-    toughness        TEXT,
-    set_id            INTEGER,
-    number            INTEGER,
-    rarity            TEXT,
-    gatherer_url      TEXT,
-    loyalty           INTEGER,
-    produced_mana     TEXT,
-    FOREIGN KEY (set_id) REFERENCES sets (id) ON DELETE CASCADE ON UPDATE CASCADE
+-- u949344532_magictierlist.cards definition
+
+CREATE TABLE `cards` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `scryfall_id` varchar(36) DEFAULT NULL,
+  `oracle_id` varchar(36) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `printed_name` varchar(255) DEFAULT NULL,
+  `lang` varchar(5) DEFAULT NULL,
+  `released_at` datetime DEFAULT NULL,
+  `scryfall_uri` varchar(255) DEFAULT NULL,
+  `mana_cost` varchar(50) DEFAULT NULL,
+  `cmc` float DEFAULT NULL,
+  `type_line` varchar(255) DEFAULT NULL,
+  `printed_type_line` varchar(255) DEFAULT NULL,
+  `oracle_text` varchar(2500) DEFAULT NULL,
+  `printed_text` varchar(2500) DEFAULT NULL,
+  `power` varchar(10) DEFAULT NULL,
+  `toughness` varchar(10) DEFAULT NULL,
+  `set_id` int(11) NOT NULL,
+  `number` int(11) DEFAULT NULL,
+  `rarity` varchar(25) DEFAULT NULL,
+  `gatherer_url` varchar(255) DEFAULT NULL,
+  `loyalty` varchar(5) DEFAULT NULL,
+  `produced_mana` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
+  UNIQUE KEY `scryfall_id_UNIQUE` (`scryfall_id`),
+  KEY `card_set_id_idx` (`set_id`),
+  CONSTRAINT `card_set_id` FOREIGN KEY (`set_id`) REFERENCES `sets` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
-);
+-- u949344532_magictierlist.image_uris definition
 
-CREATE TABLE image_uris
-(
-    id          INTEGER PRIMARY KEY AUTOINCREMENT,
-    scryfall_id     TEXT,
-    small       TEXT,
-    normal      TEXT,
-    large       TEXT,
-    png         TEXT,
-    art_crop    TEXT,
-    border_crop TEXT,
-    FOREIGN KEY (scryfall_id) REFERENCES cards (scryfall_id) ON DELETE CASCADE ON UPDATE CASCADE
-);
+CREATE TABLE `image_uris` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `scryfall_id` varchar(36) NOT NULL,
+  `small` varchar(255) DEFAULT NULL,
+  `normal` varchar(255) DEFAULT NULL,
+  `large` varchar(255) DEFAULT NULL,
+  `png` varchar(255) DEFAULT NULL,
+  `art_crop` varchar(255) DEFAULT NULL,
+  `border_crop` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `image_uris_card_scryfall_id_idx` (`scryfall_id`),
+  CONSTRAINT `image_uris_card_scryfall_id` FOREIGN KEY (`scryfall_id`) REFERENCES `cards` (`scryfall_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE tierlists
-(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    set_id INTEGER,
-    created_at
-    FOREIGN KEY (set_id) REFERENCES sets (id) ON DELETE CASCADE ON UPDATE CASCADE
-)
 
-CREATE TABLE IF NOT EXISTS card_ratings (
-    id INTEGER PRIMARY KEY,
-    card_id INTEGER NOT NULL,
-    tierlist_id INTEGER NOT NULL,
-    rating TEXT NOT NULL,
-    FOREIGN KEY (card_id) REFERENCES cards (id),
-    FOREIGN KEY (tierlist_id) REFERENCES tierlists (id),
-    UNIQUE (card_id, tierlist_id)
-);
+-- u949344532_magictierlist.tierlists definition
+
+CREATE TABLE `tierlists` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `set_id` int(11) DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `tierlist_set_id_idx` (`set_id`),
+  CONSTRAINT `tierlist_set_id` FOREIGN KEY (`set_id`) REFERENCES `sets` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- u949344532_magictierlist.cards_ratings definition
+
+CREATE TABLE `cards_ratings` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `card_id` int(11) NOT NULL,
+  `tierlist_id` int(11) NOT NULL,
+  `rating` varchar(2) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `card_tierlist_unique` (`card_id`,`tierlist_id`),
+  KEY `card_rating_card_id_idx` (`card_id`),
+  KEY `card_rating_tierlist_id_idx` (`tierlist_id`),
+  CONSTRAINT `card_rating_card_id` FOREIGN KEY (`card_id`) REFERENCES `cards` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `card_rating_tierlist_id` FOREIGN KEY (`tierlist_id`) REFERENCES `tierlists` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
