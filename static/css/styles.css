@@ -37,7 +37,7 @@ ul {
     border-radius: 5px;
     padding: 20px;
     text-align: center;
-    max-width: 250px;
+    max-width: 300px;
     margin: 20px;
 }
 
@@ -81,4 +81,10 @@ button[type="submit"] {
 
 button[type="submit"]:hover {
     background-color: #555;
+}
+
+
+.large-card {
+    width: 300px;
+    height: auto;
 }

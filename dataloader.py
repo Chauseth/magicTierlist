@@ -1,8 +1,16 @@
-import sqlite3
+import mysql.connector
 import json
 import traceback
 
-conn = sqlite3.connect("cartes_magic.db")
+config = {
+    'user': 'flask',
+    'password': 'Flask2023.',
+    'host': 'localhost',
+    'database': 'magictierlist',
+    'raise_on_warnings': True
+}
+
+conn = mysql.connector.connect(**config)
 cursor = conn.cursor()
 
 
@@ -17,8 +25,14 @@ def import_cards():
         card["printed_type_line"] = card.get("printed_type_line", "")
         card["printed_text"] = card.get("printed_text", "")
 
-        card["set_id"] = conn.execute('SELECT id FROM sets WHERE scryfall_id = ?',
-                                      (card["set_id"],)).fetchone()[0]
+        cursor.execute('SELECT id FROM sets WHERE scryfall_id = %s',
+                       (card["set_id"],))
+        set_id_result = cursor.fetchone()
+        if set_id_result:
+            card["set_id"] = set_id_result[0]
+        else:
+            print(f"Pas de set  trouvé pour ce scryfall_id: {card['set_id']}")
+            continue
 
         if "image_uris" in card:
             card["img_small"] = card["image_uris"].get("small", "")
@@ -72,8 +86,8 @@ def import_cards():
 
         try:
             cursor.execute("""
-                INSERT INTO cards (scryfall_id, oracle_id, name, printed_name, lang, released_at, scryfall_uri, mana_cost, cmc, type_line, printed_type_line, oracle_text, printed_text, power, toughness, set_id, "number", rarity, gatherer_url, loyalty, produced_mana)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO cards (scryfall_id, oracle_id, name, printed_name, lang, released_at, scryfall_uri, mana_cost, cmc, type_line, printed_type_line, oracle_text, printed_text, power, toughness, set_id, `number`, rarity, gatherer_url, loyalty, produced_mana)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """, (
                 card["id"], card["oracle_id"], card["name"], card["printed_name"], card["lang"], card["released_at"],
                 card["scryfall_uri"], card["mana_cost"], card["cmc"], card["type_line"], card["printed_type_line"],
@@ -81,7 +95,7 @@ def import_cards():
                 card["collector_number"], card["rarity"], card["gatherer"], card["loyalty"], card["produced_mana"]))
 
             cursor.execute(
-                "INSERT INTO image_uris (scryfall_id, small, normal, large, png, art_crop, border_crop) VALUES (?, ?,?,?,?,?,?)",
+                "INSERT INTO image_uris (scryfall_id, small, normal, large, png, art_crop, border_crop) VALUES (%s, %s, %s, %s, %s, %s, %s)",
                 (card["id"], card["img_small"], card["img_normal"], card["img_large"], card["img_png"],
                  card["img_art_crop"], card["img_border_crop"]))
 
@@ -97,12 +111,12 @@ def import_sets():
 
     for set in sets_data:
         cursor.execute(
-            "INSERT INTO 'sets' (code, name, icon_svg_uri, scryfall_id, released_at, scryfall_uri, set_type) VALUES(?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO sets (code, name, icon_svg_uri, scryfall_id, released_at, scryfall_uri, set_type) VALUES(%s, %s, %s, %s, %s, %s, %s)",
             (set["code"], set["name"], set["icon_svg_uri"], set["id"], set["released_at"], set["scryfall_uri"],
              set["set_type"]))
 
 
-import_sets()
+# import_sets()
 import_cards()
 
 # Valider les modifications et fermer la connexion

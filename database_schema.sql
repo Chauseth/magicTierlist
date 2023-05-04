@@ -53,35 +53,12 @@ CREATE TABLE image_uris
     FOREIGN KEY (scryfall_id) REFERENCES cards (scryfall_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE colors
-(
-    id      INTEGER PRIMARY KEY AUTOINCREMENT,
-    card_id INTEGER,
-    color   TEXT,
-    FOREIGN KEY (card_id) REFERENCES cards (id) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE colors_identity
-(
-    id      INTEGER PRIMARY KEY AUTOINCREMENT,
-    card_id INTEGER,
-    color   TEXT,
-    FOREIGN KEY (card_id) REFERENCES cards (id) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE keywords
-(
-    id      INTEGER PRIMARY KEY AUTOINCREMENT,
-    card_id INTEGER,
-    keyword TEXT,
-    FOREIGN KEY (card_id) REFERENCES cards (id) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
 CREATE TABLE tierlists
 (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT,
     set_id INTEGER,
+    created_at
     FOREIGN KEY (set_id) REFERENCES sets (id) ON DELETE CASCADE ON UPDATE CASCADE
 )
 

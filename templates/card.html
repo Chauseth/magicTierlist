@@ -6,11 +6,11 @@
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
-    <h1>{{ card.name }}</h1>
+    <h1>{{ card['printed_name'] }}</h1>
 
     <img src="{{ card['set_icon'] }}" alt="" class="extension-icon"> <a href="{{ url_for('extension', extension_code=card['set_code']) }}">{{ card.set_name }}</a>
 
-    <img src="{{ card['normal'] }}" alt="">
+    <img src="{{ card['png'] }}" alt="" class="large-card">
 
 <p>{{ card['printed_text'] }}</p>
 </body>
