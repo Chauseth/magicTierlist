@@ -137,6 +137,25 @@ def save_tierlist_ratings(extension_code, tierlist_id):
     return redirect(url_for('tierlist', extension_code=extension_code, tierlist_id=tierlist_id))
 
 
+@app.route('/extension/<string:extension_code>/<int:tierlist_id>/delete', methods=['GET'])
+def delete_tierlist(extension_code, tierlist_id):
+    # Récupérer les données du formulaire
+
+    # Insérer les notes dans la base de données
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        DELETE FROM tierlists WHERE id = %s""",
+        (tierlist_id,)
+    )
+    conn.commit()
+    conn.close()
+
+    # Rediriger vers la page de la tierlist
+    return redirect(url_for('extension', extension_code=extension_code))
+
+
 @app.route('/card/<string:scryfall_id>')
 def card(scryfall_id):
     conn = get_db_connection()
