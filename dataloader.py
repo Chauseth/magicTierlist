@@ -2,6 +2,9 @@ import mysql.connector
 import json
 import traceback
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 config = {
     'user': os.getenv("DB_USER"),
@@ -117,7 +120,7 @@ def import_sets():
              set["set_type"]))
 
 
-# import_sets()
+import_sets()
 import_cards()
 
 # Valider les modifications et fermer la connexion
