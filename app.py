@@ -37,7 +37,7 @@ def index():
     select distinct s.id , s.name, code, icon_svg_uri , s.released_at 
     from `sets` s 
     inner join cards c on s.id = c.set_id 
-    where set_type in ('expansion', 'masterpiece', 'commander') order by s.released_at desc
+    where set_type in ('expansion', 'masterpiece', 'commander', 'draft_innovation') order by s.released_at desc
     """)
     extensions = fetchall_dict(cursor)
 
