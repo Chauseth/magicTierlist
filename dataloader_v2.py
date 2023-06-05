@@ -73,8 +73,8 @@ def import_cards():
                 card["other_face"] = card["id_2"]
                 card["other_face_2"] = card["id"]
 
-                card["printed_name"] = card["card_faces"][0].get("printed_name", "name")
-                card["printed_name_2"] = card["card_faces"][1].get("printed_name", "name")
+                card["printed_name"] = card["card_faces"][0].get("printed_name", card["card_faces"][0]["name"])
+                card["printed_name_2"] = card["card_faces"][1].get("printed_name", card["card_faces"][1]["name"])
 
                 card["oracle_id"] = card["card_faces"][0].get("oracle_id", None)
                 card["oracle_id_2"] = card["card_faces"][1].get("oracle_id", None)
@@ -107,8 +107,8 @@ def import_cards():
                     card["loyalty"] = card["card_faces"][0].get("loyalty", None)
                     card["loyalty_2"] = card["card_faces"][1].get("loyalty", None)
 
-                card["printed_text"] = card["card_faces"][0].get("printed_text", "oracle_text")
-                card["printed_text_2"] = card["card_faces"][1].get("printed_text", "oracle_text")
+                card["printed_text"] = card["card_faces"][0].get("printed_text", card["card_faces"][0]["oracle_text"])
+                card["printed_text_2"] = card["card_faces"][1].get("printed_text", card["card_faces"][1]["oracle_text"])
 
                 card["oracle_text"] = card["card_faces"][0].get("oracle_text", None)
                 card["oracle_text_2"] = card["card_faces"][1].get("oracle_text", None)
@@ -130,7 +130,8 @@ def import_cards():
                     card["cmc"] = card["card_faces"][0].get("cmc", None)
                     card["cmc_2"] = card["card_faces"][1].get("cmc", None)
 
-                if "printed_type_line" not in card["card_faces"][0] and "printed_type_line" not in card["card_faces"][1]:
+                if "printed_type_line" not in card["card_faces"][0] and "printed_type_line" not in card["card_faces"][
+                    1]:
                     if "type_line" not in card["card_faces"][0] and "type_line" not in card["card_faces"][1]:
                         card["printed_type_line"] = None
                         card["printed_type_line_2"] = None
@@ -138,18 +139,18 @@ def import_cards():
                         card["type_line"] = None
                         card["type_line_2"] = None
                     else:
-                        card["printed_type_line"] = card.get("printed_type_line", "type_line")
-                        card["printed_type_line_2"] = card.get("printed_type_line", "type_line")
+                        card["printed_type_line"] = card.get("printed_type_line", card["card_faces"][0].get("type_line", None))
+                        card["printed_type_line_2"] = card.get("printed_type_line", card["card_faces"][1].get("type_line", None))
 
                         card["type_line"] = card["card_faces"][0].get("type_line", None)
                         card["type_line_2"] = card["card_faces"][1].get("type_line", None)
 
                 else:
-                    card["printed_type_line"] = card["card_faces"][0].get("printed_type_line", "type_line")
-                    card["printed_type_line_2"] = card["card_faces"][1].get("printed_type_line", "type_line")
+                    card["printed_type_line"] = card["card_faces"][0].get("printed_type_line", card["card_faces"][0]["type_line"])
+                    card["printed_type_line_2"] = card["card_faces"][1].get("printed_type_line", card["card_faces"][1]["type_line"])
 
-                    card["type_line"] = card["card_faces"][0].get("type_line", "printed_type_line")
-                    card["type_line_2"] = card["card_faces"][1].get("type_line", "printed_type_line")
+                    card["type_line"] = card["card_faces"][0].get("type_line", card["card_faces"][0]["printed_type_line"])
+                    card["type_line_2"] = card["card_faces"][1].get("type_line", card["card_faces"][1]["printed_type_line"])
 
                 if "image_uris" not in card["card_faces"][0] and "image_uris" not in card["card_faces"][1]:
                     if "image_uris" in card:
@@ -197,8 +198,14 @@ def import_cards():
                     card["img_art_crop_2"] = card["card_faces"][1]["image_uris"].get("art_crop", None)
                     card["img_border_crop_2"] = card["card_faces"][1]["image_uris"].get("border_crop", None)
 
-            if card["printed_name"] == "" or card["printed_type_line"] == "" or card["printed_text"] == "":
-                continue
+            if card["printed_name"] == "":
+                card["printed_name"] = card["name"]
+
+            if card["printed_type_line"] == "":
+                card["printed_type_line"] = card["type_line"]
+
+            if card["printed_text"] == "":
+                card["printed_text"] = card["oracle_text"]
 
             if "gatherer" in card["related_uris"]:
                 card["gatherer"] = card["related_uris"]["gatherer"]
@@ -207,6 +214,9 @@ def import_cards():
 
             if "collector_number" in card:
                 card["collector_number"] = ''.join(char for char in card["collector_number"] if char.isdigit())
+
+            if card["collector_number"] == "":
+                card["collector_number"] = 999
 
             if card.get("card_faces") is None:
                 cursor.execute("""
