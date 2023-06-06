@@ -29,6 +29,9 @@ def import_cards():
             if card["lang"] not in ["fr", "en"]:
                 continue
 
+            if not card["booster"]:
+                continue
+
             cursor.execute('SELECT id FROM sets WHERE scryfall_id = %s',
                            (card["set_id"],))
             set_id_result = cursor.fetchone()
@@ -40,7 +43,7 @@ def import_cards():
 
             if card.get("card_faces") is None:
                 card["printed_name"] = card.get("printed_name", "")
-                card["printed_type_line"] = card.get("printed_type_line", "type_line")
+                card["printed_type_line"] = card.get("printed_type_line", card["type_line"])
                 card["printed_text"] = card.get("printed_text", "")
                 card["img_small"] = card["image_uris"].get("small", "")
                 card["img_normal"] = card["image_uris"].get("normal", "")
@@ -285,11 +288,11 @@ def import_sets():
             (set["code"], set["name"], set["icon_svg_uri"], set["id"], set["released_at"], set["scryfall_uri"],
              set["set_type"]))
 
-
 import_sets()
 print("Sets importés ")
 import_cards()
 print("Cartes importées ")
+
 
 # Valider les modifications et fermer la connexion
 conn.commit()

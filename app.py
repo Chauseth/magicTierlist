@@ -86,8 +86,9 @@ def create_tierlist(extension_code):
     return render_template('create_tierlist.html')
 
 
-@app.route('/extension/<string:extension_code>/tierlist/<int:tierlist_id>')
-def tierlist(extension_code, tierlist_id):
+@app.route('/extension/<string:extension_code>/tierlist/<int:tierlist_id>', defaults={'lang': 'en'})
+@app.route('/extension/<string:extension_code>/tierlist/<int:tierlist_id>/<string:lang>')
+def tierlist(extension_code, tierlist_id, lang):
     conn = get_db_connection()
     cursor = conn.cursor()
 
@@ -103,10 +104,10 @@ def tierlist(extension_code, tierlist_id):
         FROM cards
         INNER JOIN image_uris ON cards.scryfall_id = image_uris.scryfall_id
         LEFT JOIN cards_ratings ON cards.id = cards_ratings.card_id AND cards_ratings.tierlist_id = %s
-        WHERE cards.set_id = %s
+        WHERE cards.set_id = %s and lang = %s
         ORDER BY `number`
         """,
-        (tierlist["id"], extension["id"])
+        (tierlist["id"], extension["id"], lang)
     )
     cards = fetchall_dict(cursor)
 
@@ -172,9 +173,24 @@ def card(scryfall_id):
         (scryfall_id,))
     card = fetchone_dict(cursor)
 
-    conn.close()
-    return render_template('card.html', card=card)
+    if card["other_face"] is not None:
+        cursor.execute(
+            """
+            SELECT cards.*, image_uris.png, sets.name as set_name, sets.code as set_code, sets.icon_svg_uri as set_icon
+            FROM cards
+            INNER JOIN image_uris ON cards.scryfall_id = image_uris.scryfall_id
+            INNER JOIN sets ON cards.set_id = sets.id
+            WHERE cards.scryfall_id = %s
+            LIMIT 1
+            """,
+            (card["other_face"],))
+        card2 = fetchone_dict(cursor)
 
+        conn.close()
+        return render_template('card.html', card=card, card2=card2)
+
+    conn.close()
+    return render_template('card.html', card=card, card2=None)
 
 if __name__ == '__main__':
     load_dotenv()
